@@ -1,6 +1,6 @@
 /-
 The file defines typeclasses and notations for
-common logical operators, it is based off a
+modal logical operators, it is based off a
 discussion I've had on Zulip with
 Eric Weiser.
 -/
@@ -37,6 +37,6 @@ infixr:65 "∧"  => Land.land
 infixr:60 "∨" => Lor.lor
 infixl:55 "⊃" => Lif.lif
 infix:50 "↔" => Liff.liff
-notation:max "¬" a:70 => a
+notation:max "¬" a:70 => Lnot.lnot a
 notation:max "□" a:70 => Box.box a
 notation:max "⋄" a:70 => Diamond.diamond a
