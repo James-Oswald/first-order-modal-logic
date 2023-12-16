@@ -1,4 +1,7 @@
+
 import src.LogicSymbolOverloads
+
+#check Float
 
 --Binary connectives
 inductive BC where
