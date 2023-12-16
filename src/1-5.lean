@@ -1,5 +1,7 @@
 import src.«1-3»
 
+#check 1::2::List.nil
+
 /-
 To solve 1.5.1 need some basic notion of truth over a
 propositional modal formulae with respect to a truth functional
@@ -57,8 +59,7 @@ example (P : PMF) : ¬∃(btf : Prop->Prop), (thesis btf ¬□P) := by {
     have H3 := H2 (λ_=>True); --Countermodel
     simp [sat, Not] at H3;
     apply H3;
-
-
+    sorry
   }
   exact Exists.elim H P;
 }
