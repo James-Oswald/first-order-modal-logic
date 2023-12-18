@@ -1,7 +1,5 @@
 import src.«1-3»
 
-#check 1::2::List.nil
-
 /-
 To solve 1.5.1 need some basic notion of truth over a
 propositional modal formulae with respect to a truth functional
@@ -53,9 +51,8 @@ operator will do.
 example (P : PMF) : ¬∃(btf : Prop->Prop), (thesis btf ¬□P) := by {
   intro H;
   have P : ∀(btf : Prop->Prop), thesis btf ¬□P -> False := by {
-    intro btf;
-    simp [thesis];
-    intro H2;
+    intros btf H2;
+    simp [thesis, sat] at H2;
     have H3 := H2 (λ_=>True); --Countermodel
     simp [sat, Not] at H3;
     apply H3;
