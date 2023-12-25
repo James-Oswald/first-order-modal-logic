@@ -8,7 +8,7 @@ it takes an interpetation (string->Prop), and a truth function for box
 (Prop->Prop) and a modal formulae and computes the truth value of the
 formulae.
 -/
-def sat (i : String->Prop) (btf : Prop->Prop) : PMF->Prop
+def sat (i : String->Prop) (btf : Prop->Prop): PMF->Prop
 | PMF.atom s => i s
 | PMF.not φ => ¬(sat i btf φ)
 | PMF.bc φ bc ψ => match bc with
@@ -18,6 +18,7 @@ def sat (i : String->Prop) (btf : Prop->Prop) : PMF->Prop
   | BC.iff => sat i btf φ <-> sat i btf ψ
 | PMF.box φ => btf (sat i btf φ)
 | PMF.diamond φ => ¬(btf ¬(sat i btf φ))
+
 
 /-
 A PMF φ is a "thesis under a truth functional box operator"
@@ -32,7 +33,7 @@ There are four truth table definable functions of a single input
 1) Show that we can def a truth functional operator □ for which
 □P ⊃ P is a thesis but P ⊃ □P is not.
 -/
-example :
+example:
 ∃(btf : Prop->Prop), (thesis btf (□P ⊃ P)) ∧ ¬(thesis btf (P ⊃ □P)) := by {
   apply Exists.intro (λ_=>False); --The function that always returns false
   simp [thesis];
@@ -48,14 +49,13 @@ example :
 2) Show that if we require ¬□P to be a thesis, no truth functional
 operator will do.
 -/
-example (P : PMF) : ¬∃(btf : Prop->Prop), (thesis btf ¬□P) := by {
+example (P : PMF) :
+¬∃(btf : Prop->Prop), [DecidablePred btf] -> (thesis btf ¬□P) := by {
   intro H;
-  have P : ∀(btf : Prop->Prop), thesis btf ¬□P -> False := by {
-    intros btf H2;
+  have P : ∀(btf : Prop->Prop), [DecidablePred btf] -> thesis btf ¬□P -> False := by {
+    intros btf inst H2;
     simp [thesis, sat] at H2;
-    have H3 := H2 (λ_=>True); --Countermodel
-    simp [sat, Not] at H3;
-    apply H3;
+    cases Decidable.decide (btf P)
     sorry
   }
   exact Exists.elim H P;
