@@ -118,3 +118,13 @@ example (P : PMF) :
 /-
 Exersize 1.5.2: Suppose every world is accessible to every other world.
 Would 1.3 (⋄P ⊃ □⋄P) be valid (a thesis)? Discuss informally.
+
+If box means "P is true in all accessable worlds" and diamond means
+"P is true in some accessable world"
+then (⋄P ⊃ □⋄P) means
+"If P is true in some accessable worlds then for all accessable worlds
+P is true in some accessable world" \
+
+Assuming every world is accessible to every other world then i posit
+this would be a thesis.
+-/
