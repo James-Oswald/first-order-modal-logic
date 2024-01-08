@@ -33,10 +33,15 @@ class Box (α : Type) : Type where
 class Diamond (α : Type) : Type where
   diamond : α → α
 
+class Forces (α : Type u) (β : Type v) : Type (max u v) where
+  forces : α → β → Prop
+
 infixr:65 "∧"  => Land.land
 infixr:60 "∨" => Lor.lor
 infixl:55 "⊃" => Lif.lif
 infix:50 "↔" => Liff.liff
+infix:50 "≡" => Liff.liff
+infix:30 "⊩" => Forces.forces
 notation:max "¬" a:70 => Lnot.lnot a
 notation:max "□" a:70 => Box.box a
 notation:max "⋄" a:70 => Diamond.diamond a
