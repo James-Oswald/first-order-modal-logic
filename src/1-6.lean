@@ -36,24 +36,24 @@ Takes a dependent pair of a model and a world and a formula and returns if
 the formula is true at the world
 Actual use of a dependent sigma pair type: (ℳ : Model) × ℳ.ℱ.ℐ
 -/
-def sat (ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ) (ϕ : PMF) : Prop :=
+def val (ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ) (ϕ : PMF) : Prop :=
 let ℳ := ℳxℐ.fst
 let Γ := ℳxℐ.snd
 let ℐ := ℳ.ℱ.ℐ
 let ℛ := ℳ.ℱ.ℛ
 match ϕ with
 | PMF.Atom a => ℳ.𝒯 Γ a
-| PMF.And φ ψ => sat ℳxℐ φ ∧ sat ℳxℐ ψ
-| PMF.Or φ ψ => sat ℳxℐ φ ∨ sat ℳxℐ ψ
-| PMF.Not φ => ¬sat ℳxℐ φ
-| PMF.Implies φ ψ => sat ℳxℐ φ → sat ℳxℐ ψ
-| PMF.Iff φ ψ => sat ℳxℐ φ ↔ sat ℳxℐ ψ
-| PMF.Box φ => ∀(Γ' : ℐ), ℛ Γ Γ' → sat ⟨ℳ, Γ'⟩ φ
-| PMF.Diamond φ => ∃(Γ' : ℐ), ℛ Γ Γ' ∧ sat ⟨ℳ, Γ'⟩ φ
+| PMF.And φ ψ => val ℳxℐ φ ∧ val ℳxℐ ψ
+| PMF.Or φ ψ => val ℳxℐ φ ∨ val ℳxℐ ψ
+| PMF.Not φ => ¬val ℳxℐ φ
+| PMF.Implies φ ψ => val ℳxℐ φ → val ℳxℐ ψ
+| PMF.Iff φ ψ => val ℳxℐ φ ↔ val ℳxℐ ψ
+| PMF.Box φ => ∀(Γ' : ℐ), ℛ Γ Γ' → val ⟨ℳ, Γ'⟩ φ
+| PMF.Diamond φ => ∃(Γ' : ℐ), ℛ Γ Γ' ∧ val ⟨ℳ, Γ'⟩ φ
 
 #check (ℳ : Model) × ℳ.ℱ.ℐ
 
-instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨sat⟩
+instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨val⟩
 
 --Exersises
 /-
@@ -61,7 +61,7 @@ instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨sat⟩
 Γ ⊩ (□X ≡ ¬◇¬X) and Γ ⊩ (◇X ≡ ¬□¬X)
 -/
 example (ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ) (X : PMF): ℳxℐ ⊩ □X ≡ ¬⋄¬X := by
-  simp [Forces.forces, sat]
+  simp [Forces.forces, val]
   apply Iff.intro
   . intro H
     intro ⟨w, H2⟩
@@ -76,7 +76,7 @@ example (ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ) (X : PMF): ℳxℐ ⊩ □X ≡
     exact ⟨w1, ⟨H2, H3⟩⟩
 
 example (ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ) (X : PMF): ℳxℐ ⊩ ⋄X ≡ ¬□¬X := by
-  simp [Forces.forces, sat]
+  simp [Forces.forces, val]
   apply Iff.intro
   . intro ⟨w, H⟩ H2
     have H3 := H2 w H.left
@@ -98,7 +98,7 @@ example  (ℳ : Model) (Γ: ℳ.ℱ.ℐ) (ϕ : PMF):
 let ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ := ⟨ℳ, Γ⟩
 (∀(Γ' : ℳ.ℱ.ℐ), ¬ℳ.ℱ.ℛ Γ Γ') -> (ℳxℐ ⊩ □ϕ) ∧ (ℳxℐ ⊩ ¬⋄ϕ) := by
   intros ℳxℐ H
-  simp [Forces.forces, sat]
+  simp [Forces.forces, val]
   apply And.intro
   case left =>
     intro Γ'' H2

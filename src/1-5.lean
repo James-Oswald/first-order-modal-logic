@@ -8,16 +8,16 @@ it takes an interpetation (string->Prop), and a truth function for box
 (Prop->Prop) and a modal formulae and computes the truth value of the
 formulae.
 -/
-def sat (i : String->Bool) (btf : Bool->Bool): PMF->Bool
+def val (i : String->Bool) (btf : Bool->Bool): PMF->Bool
 | PMF.atom s => i s
-| PMF.not φ => ¬(sat i btf φ)
+| PMF.not φ => ¬(val i btf φ)
 | PMF.bc φ bc ψ => match bc with
-  | BC.and => sat i btf φ ∧ sat i btf ψ
-  | BC.or => sat i btf φ ∨ sat i btf ψ
-  | BC.implies => sat i btf φ -> sat i btf ψ
-  | BC.iff => sat i btf φ <-> sat i btf ψ
-| PMF.box φ => btf (sat i btf φ)
-| PMF.diamond φ => ¬(btf ¬(sat i btf φ))
+  | BC.and => val i btf φ ∧ val i btf ψ
+  | BC.or => val i btf φ ∨ val i btf ψ
+  | BC.implies => val i btf φ -> val i btf ψ
+  | BC.iff => val i btf φ <-> val i btf ψ
+| PMF.box φ => btf (val i btf φ)
+| PMF.diamond φ => ¬(btf ¬(val i btf φ))
 
 
 /-
@@ -25,7 +25,7 @@ A PMF φ is a "thesis under a truth functional box operator"
 (is valid) if it is true under all assignments of atoms to truth values.
 -/
 def thesis (btf : Bool->Bool) (φ : PMF): Prop :=
-∀(i : String->Bool), sat i btf φ
+∀(i : String->Bool), val i btf φ
 
 /-
 Exersize 1.5.1:
@@ -39,10 +39,10 @@ example:
   simp [thesis];
   apply And.intro;
   intro i;
-  simp [sat];
+  simp [val];
   intro H;
   have H2 := H (λ_=>true); --Countermodel
-  simp [sat] at H2;
+  simp [val] at H2;
 }
 
 #check Not
@@ -53,11 +53,11 @@ example:
 Exists.intro
   (λ_=>false)
   (And.intro
-    (λ _ => by simp [thesis, sat])
+    (λ _ => by simp [thesis, val])
     (λ H => by
       simp [thesis] at H
       have H2 := H (λ_=>true)
-      simp [sat] at H2;
+      simp [val] at H2;
     )
   )
 
@@ -76,7 +76,7 @@ that being (λ_=>false).
 -/
 example (P : PMF) : ∃(btf : Bool->Bool), thesis btf ¬□P := by
   exists (λ_=>false)
-  simp [thesis, sat]
+  simp [thesis, val]
 
 /-
 I read it wrong AGAIN (if forgot the also) and tried to prove
@@ -89,10 +89,10 @@ but this is obviously false, as we prove below via the counterexample
 (λ_=>true)
 -/
 example (P : PMF) : ¬∀(btf : Bool->Bool), thesis btf ¬□P := by
-  simp [thesis, sat]
+  simp [thesis, val]
   intro H
   have H2 := H (λ_=>true) (λ_=>true)
-  simp [sat] at H2
+  simp [val] at H2
 
 /-
 For real this time
@@ -101,7 +101,7 @@ example (P : PMF) :
 ¬∃(btf : Bool->Bool), (thesis btf (□P ⊃ P)) ∧ (¬thesis btf (P ⊃ □P)) ∧ (¬thesis btf ¬□P) := by
   intro ⟨w, H⟩
   have ⟨H1, H2, H3⟩ := H
-  simp [thesis, sat] at H1 H2 H3
+  simp [thesis, val] at H1 H2 H3
   simp [Not] at H2 H3;
   apply H3
   intro i;

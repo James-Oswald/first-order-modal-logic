@@ -37,20 +37,23 @@ Takes a dependent pair of a model and a world and a formula and returns if
 the formula is true at the world
 Actual use of a dependent sigma pair type: (ℳ : Model) × ℳ.ℱ.ℐ
 -/
-def sat (ℳ : Model) (Γ : ℳ.ℱ.ℐ) (ϕ : PMF) : Prop :=
+def val (ℳ : Model) (Γ : ℳ.ℱ.ℐ) (ϕ : PMF) : Prop :=
 match ϕ with
 | PMF.Atom a => ℳ.𝒯 Γ a
-| PMF.And φ ψ => sat ℳ Γ φ ∧ sat ℳ Γ ψ
-| PMF.Or φ ψ => sat ℳ Γ φ ∨ sat ℳ Γ ψ
-| PMF.Not φ => ¬sat ℳ Γ φ
-| PMF.Implies φ ψ => sat ℳ Γ φ → sat ℳ Γ ψ
-| PMF.Iff φ ψ => sat ℳ Γ φ ↔ sat ℳ Γ ψ
-| PMF.Box φ => ∀(Γ' : ℳ.ℱ.ℐ), ℳ.ℱ.ℛ Γ Γ' → sat ℳ Γ' φ
-| PMF.Diamond φ => ∃(Γ' : ℳ.ℱ.ℐ), ℳ.ℱ.ℛ Γ Γ' ∧ sat ℳ Γ' φ
+| PMF.And φ ψ => val ℳ Γ φ ∧ val ℳ Γ ψ
+| PMF.Or φ ψ => val ℳ Γ φ ∨ val ℳ Γ ψ
+| PMF.Not φ => ¬val ℳ Γ φ
+| PMF.Implies φ ψ => val ℳ Γ φ → val ℳ Γ ψ
+| PMF.Iff φ ψ => val ℳ Γ φ ↔ val ℳ Γ ψ
+| PMF.Box φ => ∀(Γ' : ℳ.ℱ.ℐ), ℳ.ℱ.ℛ Γ Γ' → val ℳ Γ' φ
+| PMF.Diamond φ => ∃(Γ' : ℳ.ℱ.ℐ), ℳ.ℱ.ℛ Γ Γ' ∧ val ℳ Γ' φ
 
-#check (ℳ : Model) × ℳ.ℱ.ℐ
+--#check (ℳ : Model) × ℳ.ℱ.ℐ
 
-instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨λℳxℐ φ => sat ℳxℐ.fst ℳxℐ.snd φ⟩
+--Model World Pair type alias
+def MWP := (ℳ : Model) × ℳ.ℱ.ℐ
+
+instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨λℳxℐ φ => val ℳxℐ.fst ℳxℐ.snd φ⟩
 
 --Exersises
 /-
@@ -58,9 +61,8 @@ instance : Forces ((ℳ : Model) × ℳ.ℱ.ℐ) PMF := ⟨λℳxℐ φ => sat �
 Γ ⊩ (□X ≡ ¬◇¬X) and Γ ⊩ (◇X ≡ ¬□¬X)
 -/
 example (ℳ : Model) (Γ : ℳ.ℱ.ℐ) (X : PMF):
-let ℳxΓ : (ℳ : Model) × ℳ.ℱ.ℐ := ⟨ℳ, Γ⟩
-ℳxΓ ⊩ □X ≡ ¬⋄¬X := by
-  simp [Forces.forces, sat]
+(⟨ℳ, Γ⟩ : MWP) ⊩ □X ≡ ¬⋄¬X := by
+  simp [Forces.forces, val]
   apply Iff.intro
   . intro H
     intro ⟨w, H2⟩
@@ -80,9 +82,8 @@ Show that if a world Γ of a model has no
 worlds accessable to it, than at Γ every formula is nec but none are possible
 -/
 example (ℳ : Model) (Γ : ℳ.ℱ.ℐ) (X : PMF):
-let ℳxΓ : (ℳ : Model) × ℳ.ℱ.ℐ := ⟨ℳ, Γ⟩
-ℳxΓ ⊩ ⋄X ≡ ¬□¬X := by
-  simp [Forces.forces, sat]
+(⟨ℳ, Γ⟩ : MWP) ⊩ ⋄X ≡ ¬□¬X := by
+  simp [Forces.forces, val]
   apply Iff.intro
   . intro ⟨w, H⟩ H2
     have H3 := H2 w H.left
@@ -96,9 +97,8 @@ let ℳxΓ : (ℳ : Model) × ℳ.ℱ.ℐ := ⟨ℳ, Γ⟩
     assumption
 
 example  (ℳ : Model) (Γ: ℳ.ℱ.ℐ) (ϕ : PMF):
-let ℳxℐ : (ℳ : Model) × ℳ.ℱ.ℐ := ⟨ℳ, Γ⟩
-(∀(Γ' : ℳ.ℱ.ℐ), ¬ℳ.ℱ.ℛ Γ Γ') -> (ℳxℐ ⊩ □ϕ) ∧ (ℳxℐ ⊩ ¬⋄ϕ) := by
-  simp [Forces.forces, sat]
+(∀(Γ' : ℳ.ℱ.ℐ), ¬ℳ.ℱ.ℛ Γ Γ') -> ((⟨ℳ, Γ⟩ : MWP) ⊩ □ϕ) ∧ ((⟨ℳ, Γ⟩ : MWP) ⊩ ¬⋄ϕ) := by
+  simp [Forces.forces, val]
   intro H
   apply And.intro
   case left =>
