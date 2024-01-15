@@ -1,5 +1,4 @@
 
-
 import src.«1-6-1»
 
 /-
@@ -22,11 +21,34 @@ def T1 : W1 -> String -> Prop
 | _ , _ => False
 
 def M1 : Model := ⟨⟨W1, A1⟩, T1⟩
-def P : PMF := PMF.Atom "P"
-def Q : PMF := PMF.Atom "Q"
+-- def P : PMF := PMF.Atom "P"
+-- def Q : PMF := PMF.Atom "Q"
 
-example :
-(⟨M1, Δ⟩ : MWP) ⊩ P ∨ Q := by
+
+example : (⟨M1, Δ⟩ : MWP) ⊩ P ∨ Q := by
   simp [Forces.forces, val]
   apply Or.intro_left
   simp [M1, T1]
+
+example : (⟨M1, Ω⟩ : MWP) ⊩ P ∨ Q := by
+  simp [Forces.forces, val]
+  apply Or.intro_right
+  simp [M1, T1]
+
+example : (⟨M1, Γ⟩ : MWP) ⊩ □(P ∨ Q) := by
+  simp [Forces.forces, val]
+  intro w H1
+  simp [M1, T1, A1] at H1
+  cases w
+  . simp at H1
+  . simp [M1, T1]
+  . simp [M1, T1]
+
+-- example : ¬((⟨M1, Γ⟩ : MWP) ⊩ □P) := by
+--   simp [Not, Forces.forces, val]
+--   intro w H1
+--   simp [M1, T1, A1] at H1
+--   cases w
+--   case Γ => simp at H1
+--   case Δ => simp [M1, T1]
+--   case Ω => simp [M1, T1]

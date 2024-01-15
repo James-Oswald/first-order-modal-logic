@@ -19,7 +19,6 @@ def val (i : String->Bool) (btf : Bool->Bool): PMF->Bool
 | PMF.box φ => btf (val i btf φ)
 | PMF.diamond φ => ¬(btf ¬(val i btf φ))
 
-
 /-
 A PMF φ is a "thesis under a truth functional box operator"
 (is valid) if it is true under all assignments of atoms to truth values.

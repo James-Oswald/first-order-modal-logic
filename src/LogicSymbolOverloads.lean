@@ -42,6 +42,7 @@ infixl:55 "⊃" => Lif.lif
 infix:50 "↔" => Liff.liff
 infix:50 "≡" => Liff.liff
 infix:30 "⊩" => Forces.forces
+infix:30 "⊮" => ¬(Forces.forces · ·)
 notation:max "¬" a:70 => Lnot.lnot a
 notation:max "□" a:70 => Box.box a
 notation:max "⋄" a:70 => Diamond.diamond a

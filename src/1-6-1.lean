@@ -3,6 +3,7 @@
 import src.LogicSymbolOverloads
 import src.util
 
+--Propositional Modal Formulae
 inductive PMF where
 | Atom : String -> PMF
 | And : PMF -> PMF -> PMF
@@ -12,6 +13,9 @@ inductive PMF where
 | Iff : PMF -> PMF -> PMF
 | Box : PMF -> PMF
 | Diamond : PMF -> PMF
+deriving BEq
+
+#check (PMF.And (PMF.Atom "P") (PMF.Atom "P"))
 
 instance : Land PMF := ⟨PMF.And⟩
 instance : Lor PMF := ⟨PMF.Or⟩
@@ -20,6 +24,10 @@ instance : Liff PMF := ⟨PMF.Iff⟩
 instance : Lnot PMF := ⟨PMF.Not⟩
 instance : Box PMF := ⟨PMF.Box⟩
 instance : Diamond PMF := ⟨PMF.Diamond⟩
+
+def P := PMF.Atom "P"
+def Q := PMF.Atom "Q"
+#check □¬(P ∧ □Q)
 
 structure Frame where
   ℐ : Type --possible worlds
@@ -30,12 +38,10 @@ structure Model where
   ℱ : Frame
   𝒯 : ℱ.ℐ -> String -> Prop --Truth at a world
 
-
 /-
 Extension of truth of an atom at world to truth of formulae at a world
 Takes a dependent pair of a model and a world and a formula and returns if
 the formula is true at the world
-Actual use of a dependent sigma pair type: (ℳ : Model) × ℳ.ℱ.ℐ
 -/
 def val (ℳ : Model) (Γ : ℳ.ℱ.ℐ) (ϕ : PMF) : Prop :=
 match ϕ with
