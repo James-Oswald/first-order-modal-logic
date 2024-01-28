@@ -27,7 +27,6 @@ theorem existsneg (p : α->Prop) : (¬∃ a : α, p a) <-> (∀ a : α, ¬p a) :
     have H4 := H w
     contradiction
 
-
 theorem notimpnot (A B : Prop) : ¬(A -> ¬B) -> A ∧ B := by
   intro H
   apply Classical.byContradiction
@@ -36,3 +35,14 @@ theorem notimpnot (A B : Prop) : ¬(A -> ¬B) -> A ∧ B := by
   intro H3 H4
   have H5 := And.intro H3 H4
   contradiction
+
+theorem contrapositive (A B : Prop) : (A -> B) <-> (¬B -> ¬A) := by
+  apply Iff.intro
+  . intro H H2 H3
+    have L1 := H H3
+    contradiction
+  . intro H H2
+    apply Classical.byContradiction
+    intro H3
+    have L1 := H H3
+    contradiction

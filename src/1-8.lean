@@ -1,5 +1,6 @@
 
 import src.«1-6-1»
+import src.util
 
 def valid (M : Model) (φ : PMF) : Prop := ∀ w : M.ℱ.ℐ, (⟨M, w⟩ : MWP) ⊩ φ
 
@@ -21,6 +22,8 @@ example (M : Model) (P : PMF): serial M.ℱ -> valid M (□P ⊃ ⋄P) := by
   have H4 := H2 w2 H3
   exists w2
 
+#check Subtype
+
 /-
 1.8.2 Show that a frame is transitive iff every formula of the form
 □P ⊃ □□P is valid in it.
@@ -38,4 +41,5 @@ example (M : Model) (P : PMF) : transitive M.ℱ ↔ valid M (□P ⊃ □□P) 
     simp [transitive]
     intros w w2 w3 H2 H3
     have H4 := H w
+    rw [contrapositive] at H4
     sorry
